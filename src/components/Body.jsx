@@ -10,9 +10,7 @@ const Body = () => {
   const [searchValue, setSearchValue] = useState("");
 
   useEffect(() => {
-   
-      fetchData();
-  
+    fetchData();
   }, []);
 
   const fetchData = async () => {
@@ -76,14 +74,17 @@ const Body = () => {
         </button>
       </div>
       <div className="res-container">
-        {filteredRestaurant.map((restaurant) => (
-          <Link style={{textDecoration:"none",color:"black"}} to={'/restaurants/'+restaurant?.info?.id}>
-          <RestaurantCard
-            key={restaurant?.info?.id}
-            restaurantData={restaurant}
-          />
+        {filteredRestaurant.map((restaurant, index) => (
+          <Link
+            key={index}
+            style={{ textDecoration: "none", color: "black" }}
+            to={"/restaurants/" + restaurant?.info?.id}
+          >
+            <RestaurantCard
+              key={restaurant?.info?.id}
+              restaurantData={restaurant}
+            />
           </Link>
-          
         ))}
       </div>
     </div>

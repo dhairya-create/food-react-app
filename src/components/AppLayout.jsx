@@ -1,14 +1,12 @@
-import React from 'react'
-import Header from './Header'
-import Body from './Body'
+import React from "react";
+
+import Body from "./Body";
 const AppLayout = () => {
   return (
-    <div className='app'>
-   
-    <Body />
-
+    <div className="app">
+      <Body />
     </div>
-  )
-}
+  );
+};
 
-export default AppLayout
+export default AppLayout;
