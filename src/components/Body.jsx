@@ -3,29 +3,36 @@ import RestaurantCard from "./RestaurantCard";
 import { restaurantData } from "../data";
 import Shimmer from "./Shimmer";
 import { Link } from "react-router-dom";
+import useOnlineStatus from "../utils/useOnlineStatus";
 
 const Body = () => {
   const [listOfRestaurants, setListOfRestaurants] = useState([]);
   const [filteredRestaurant, setFilteredRestaurant] = useState([]);
   const [searchValue, setSearchValue] = useState("");
+  const onlineStatus = useOnlineStatus();
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (onlineStatus) {
+      fetchData();
+    }
+  }, [onlineStatus]);
 
   const fetchData = async () => {
-    const data = await fetch(
-      "https://www.swiggy.com/dapi/restaurants/list/v5?lat=23.0225&lng=72.5714&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING"
-    );
-    const json = await data.json();
+    try {
+      const data = await fetch(
+        "https://www.swiggy.com/dapi/restaurants/list/v5?lat=23.0225&lng=72.5714&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING"
+      );
+      const json = await data.json();
 
-    setListOfRestaurants(
-      json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants
-    );
-
-    setFilteredRestaurant(
-      json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants
-    );
+      setListOfRestaurants(
+        json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants
+      );
+      setFilteredRestaurant(
+        json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants
+      );
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
 
   const ShowFilteredData = () => {
@@ -48,6 +55,10 @@ const Body = () => {
     setFilteredRestaurant(filteredRestaurantResult);
   };
 
+  if (!onlineStatus) {
+    return <h1>You are offline!! Check your connection</h1>;
+  }
+
   if (listOfRestaurants.length === 0) {
     return <Shimmer />;
   }
@@ -64,7 +75,6 @@ const Body = () => {
               setSearchValue(e.target.value);
             }}
           />
-
           <button className="search-btn" onClick={handleSearch}>
             Search
           </button>
