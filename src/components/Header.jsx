@@ -17,6 +17,7 @@ const Header = () => {
         <ul>
           <li>Online Status {onlineStatus ? "🟢" : "🔴"}</li>
             <li><Link style={{textDecoration:"none"}} to='/'>Home</Link></li>
+            <li><Link style={{textDecoration:"none"}} to='/grocery'>Grocery</Link></li>
             <li><Link style={{textDecoration:"none"}} to='/about'>About Us</Link></li>
             <li><Link style={{textDecoration:"none"}} to='/contact-us'>Contact Us</Link></li>
             <li>Cart</li>
