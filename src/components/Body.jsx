@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import RestaurantCard from "./RestaurantCard";
+import RestaurantCard, { withPromotedLabel } from "./RestaurantCard";
 import { restaurantData } from "../data";
 import Shimmer from "./Shimmer";
 import { Link } from "react-router-dom";
@@ -11,6 +11,8 @@ const Body = () => {
   const [searchValue, setSearchValue] = useState("");
   const onlineStatus = useOnlineStatus();
 
+  const RestaurantCardPromoted = withPromotedLabel(RestaurantCard);
+
   useEffect(() => {
     if (onlineStatus) {
       fetchData();
@@ -19,27 +21,22 @@ const Body = () => {
 
   const fetchData = async () => {
     try {
-      const data = await fetch(
-        "https://www.swiggy.com/dapi/restaurants/list/v5?lat=23.0225&lng=72.5714&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING"
+      const response = await fetch(
+        "https://www.swiggy.com/dapi/restaurants/list/v5?lat=12.9716&lng=77.5946&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING"
       );
-      const json = await data.json();
+      const data = await response.json();
 
       setListOfRestaurants(
-        json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants
+        data?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle
+          ?.restaurants
       );
       setFilteredRestaurant(
-        json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants
+        data?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle
+          ?.restaurants
       );
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  };
-
-  const ShowFilteredData = () => {
-    const updatedList = restaurantData.filter(
-      (restaurant) => restaurant.info?.avgRatingString > 4
-    );
-    setListOfRestaurants(updatedList);
   };
 
   const handleSearch = () => {
@@ -55,8 +52,15 @@ const Body = () => {
     setFilteredRestaurant(filteredRestaurantResult);
   };
 
+  const handleFilteredData = () => {
+    const updatedList = restaurantData.filter(
+      (restaurant) => restaurant.info?.avgRatingString > 4
+    );
+    setListOfRestaurants(updatedList);
+  };
+
   if (!onlineStatus) {
-    return <h1>You are offline!! Check your connection</h1>;
+    return <h1 className="text-center mt-8">You are offline!! Check your connection</h1>;
   }
 
   if (listOfRestaurants.length === 0) {
@@ -64,39 +68,45 @@ const Body = () => {
   }
 
   return (
-    <div className="body">
-      <div className="filter flex">
-        <div className="search m-4 p-4">
+    <div className="body mx-auto max-w-screen-lg">
+      <div className="filter flex justify-between items-center m-4 p-4 bg-gray-100 rounded-lg">
+        <div className="search">
           <input
             type="text"
-            className="border border-solid border-black"
+            className="border border-solid border-gray-300 px-4 py-2 rounded-lg focus:outline-none"
+            placeholder="Search restaurants..."
             value={searchValue}
-            onChange={(e) => {
-              setSearchValue(e.target.value);
-            }}
+            onChange={(e) => setSearchValue(e.target.value)}
           />
-          <button className="px-4 py-2 bg-green-200 m-4 rounded-lg" onClick={handleSearch}>
+          <button
+            className="ml-4 px-4 py-2 bg-green-400 text-white rounded-lg focus:outline-none"
+            onClick={handleSearch}
+          >
             Search
           </button>
         </div>
-        <div className="search m-4 p-4">
-        <button className="px-4 py-2 bg-gray-300 m-4 rounded-lg" onClick={ShowFilteredData}>
+        <button
+          className="ml-4 px-4 py-2 bg-gray-400 text-white rounded-lg focus:outline-none"
+          onClick={handleFilteredData}
+        >
           Top Rated Restaurants
         </button>
-        </div>
-      
       </div>
-      <div className="flex flex-wrap justify-center">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {filteredRestaurant.map((restaurant, index) => (
           <Link
             key={index}
-            style={{ textDecoration: "none", color: "black" }}
             to={"/restaurants/" + restaurant?.info?.id}
+            className="text-black"
           >
-            <RestaurantCard
-              key={restaurant?.info?.id}
-              restaurantData={restaurant}
-            />
+            {index % 2 === 0 ? (
+              <RestaurantCardPromoted  restaurantData={restaurant} />
+            ) : (
+              <RestaurantCard
+                key={restaurant?.info?.id}
+                restaurantData={restaurant}
+              />
+            )}
           </Link>
         ))}
       </div>
