@@ -1,11 +1,14 @@
 import React from "react";
 
 import Body from "./Body";
+
 const AppLayout = () => {
   return (
-    <div className="app">
-      <Body />
-    </div>
+    
+      <div className="app">
+        <Body />
+      </div>
+   
   );
 };
 

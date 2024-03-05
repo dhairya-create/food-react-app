@@ -1,6 +1,18 @@
 import React from "react";
+import { useDispatch } from "react-redux";
+import { addItem } from "../utils/cartSlice";
 
 const ItemList = ({ items }) => {
+
+  const dispatch = useDispatch();
+  const handleAddItem = (item) => {
+    //dispatch an action
+    dispatch(addItem(item))
+
+  }
+
+
+
   return (
     <div>
       <div className=" cursor-pointer">
@@ -24,7 +36,9 @@ const ItemList = ({ items }) => {
 
               <div className="w-3/12 p-4">
                 <div className="absolute">
-                  <button className="p-1 mx-0 rounded-lg bg-black opacity-75 text-white">
+                  <button className="p-1 mx-0 rounded-lg bg-black opacity-75 text-white"
+                  onClick={() => handleAddItem(item)}
+                  >
                     Add +
                   </button>
                 </div>
